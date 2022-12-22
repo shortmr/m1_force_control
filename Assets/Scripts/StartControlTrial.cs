@@ -35,11 +35,11 @@ public class StartControlTrial : MonoBehaviour
             start = 0;
             startText = "...";
             GetComponent<Image>().color = new Color(255f*1f, 255f*0f, 255f*0f);
-            if (mode == 1) {
+            if (mode == 2) {
                 // Force Control
                 target.GetComponent<DesiredEffortControl>().begin = true;
                 actual.GetComponent<ActualEffortControl>().begin = true;
-            } else if (mode == 0) {
+            } else if (mode == 1) {
                 // MVC
                 mvc.GetComponent<ActualEffortMVC>().begin = true;
                 restText.SetActive(false);
@@ -50,7 +50,7 @@ public class StartControlTrial : MonoBehaviour
             start = 1;
             startText = "Start";
             GetComponent<Image>().color = new Color(255f*1f, 255f*0.89f, 255f*0f);
-            if (mode == 0) {
+            if (mode == 1) {
                 // MVC
                 restText.SetActive(true);
                 arrow.SetActive(false);

@@ -7,12 +7,14 @@ public class DesiredEffortSine : MonoBehaviour
     public GameObject desiredEffort;
     public GameObject actualEffort;
     public GameObject settings;
-    public bool type;
+    public int type;
 
     private LineRenderer primaryRenderer;
     private bool startup = true;
     private float mvcRange;
     private float mvcOffset;
+    private float mvcRangeCombined;
+    private float mvcOffsetCombined;
     private float primaryFrequency;
     private float secondaryFrequency;
     private float trialDuration;
@@ -31,7 +33,7 @@ public class DesiredEffortSine : MonoBehaviour
 
     void OnEnable() {
         if (startup) {
-            type = true;
+            type = 1;
             primaryRenderer = GetComponent<LineRenderer>();
             startup = false;
         }
@@ -48,6 +50,8 @@ public class DesiredEffortSine : MonoBehaviour
         // load force control params from settings
         mvcRange = settings.GetComponent<ControlSettings>().mvcRange;
         mvcOffset = settings.GetComponent<ControlSettings>().mvcOffset;
+        mvcRangeCombined = settings.GetComponent<ControlSettings>().mvcRangeCombined;
+        mvcOffsetCombined = settings.GetComponent<ControlSettings>().mvcOffsetCombined;
         primaryFrequency = settings.GetComponent<ControlSettings>().primaryFrequency;
         secondaryFrequency = settings.GetComponent<ControlSettings>().secondaryFrequency;
         trialDuration = settings.GetComponent<ControlSettings>().trialDuration;
@@ -75,13 +79,19 @@ public class DesiredEffortSine : MonoBehaviour
             } else {
                 sin = Mathf.Sin(2f * Mathf.PI * primaryFrequency * trialDuration * (float) i / (float) renderer.positionCount);
             }
-            float y = mvcRange * sin + mvcOffset;
-            if (type) {
+            float y;
+            if (type == 1) {
                 // dorsiflexion
+                y = mvcRange * sin + mvcOffset;
                 renderer.SetPosition(i, new Vector3(x, gain * y + 2f, 0f));
-            } else {
+            } else if (type == 2) {
                 // plantarflexion
+                y = mvcRange * sin + mvcOffset;
                 renderer.SetPosition(i, new Vector3(x, -1 * gain * y + 2f, 0f));
+            } else if (type == 3) {
+                // dorsiflexion + plantarflexion
+                y = mvcRangeCombined * sin + mvcOffsetCombined;
+                renderer.SetPosition(i, new Vector3(x, gain * y + 2f, 0f));
             }
         }
         desiredEffort.GetComponent<DesiredEffortControl>().ready = true;

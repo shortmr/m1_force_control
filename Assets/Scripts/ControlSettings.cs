@@ -9,8 +9,10 @@ public class ControlSettings : MonoBehaviour
     public string m1; // string (m1_x or m1_y)
     public float mvcValuePF; // Nm (from torque sensor)
     public float mvcValueDF; // Nm (from torque sensor)
-    public float mvcRange; // % MVC
-    public float mvcOffset; // % MVC
+    public float mvcRange; // % MVC (uni-directional)
+    public float mvcOffset; // % MVC (uni-directional)
+    public float mvcRangeCombined; // % MVC (bi-directional DF and PF)
+    public float mvcOffsetCombined; // % MVC (bi-directional DF and PF)
     public float primaryFrequency; // Hz
     public float secondaryFrequency; // Hz
     public float trialDuration; // seconds

@@ -35,6 +35,10 @@ public class UpdateMVC : MonoBehaviour
         mvcText = GetComponent<InputField>();
         if(float.TryParse(mvcText.text, out mvcValue))
         {
+            if (mvcValue == 0.0f) {
+                mvcValue = 1.0f; //avoid divide by zero
+                mvcText.text = mvcValue.ToString("0.0");
+            }
             if (dorsiflexion) {
                 settings.GetComponent<ControlSettings>().mvcValueDF = mvcValue;
                 actualEffort.GetComponent<ActualEffortControl>().mvcValueDF = mvcValue;

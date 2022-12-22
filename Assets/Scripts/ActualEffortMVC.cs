@@ -26,7 +26,7 @@ public class ActualEffortMVC : MonoBehaviour
 
     public bool ready;
     public bool begin;
-    public bool type;
+    public int type;
 
     private bool pass;
     private bool rest;
@@ -56,7 +56,7 @@ public class ActualEffortMVC : MonoBehaviour
         pass = false;
         begin = false;
         rest = true;
-        type = true;
+        type = 1;
         counter = 0f;
 
         // Discrete time filter for torque plot
@@ -105,11 +105,7 @@ public class ActualEffortMVC : MonoBehaviour
                 {
                     float time = counterList[i];
                     float y = actualEffortList[i];
-                    int target = 0;
-                    if (type) {
-                        target = 1;
-                    }
-                    sb.Append('\n').Append(time.ToString()).Append(',').Append(target.ToString()).Append(',').Append(y.ToString());
+                    sb.Append('\n').Append(time.ToString()).Append(',').Append(type.ToString()).Append(',').Append(y.ToString());
                 }
                 SaveToCSV(sb.ToString());
 
@@ -118,10 +114,10 @@ public class ActualEffortMVC : MonoBehaviour
                 stageCount += 1;
                 stageText.GetComponent<TextMeshProUGUI>().text = stageCount.ToString();
                 // get maximum values and update text field
-                if (type) {
+                if (type == 1) {
                     float abs_max_eff = Mathf.Abs(actualEffortList.Max());
                     mvcValueDF.GetComponent<InputField>().text = abs_max_eff.ToString("0.0000");
-                } else {
+                } else if (type == 2){
                     float abs_max_eff = Mathf.Abs(actualEffortList.Min());
                     mvcValuePF.GetComponent<InputField>().text = abs_max_eff.ToString("0.0000");
                 }
@@ -147,9 +143,9 @@ public class ActualEffortMVC : MonoBehaviour
         int.TryParse(stageText.GetComponent<TextMeshProUGUI>().text, out trialNumber);
         string dataText = dataField.GetComponent<InputField>().text;
         string trialType = "";
-        if (type) {
+        if (type == 1) {
             trialType = "df";
-        } else {
+        } else if (type == 2) {
             trialType = "pf";
         }
         var filePath = Path.Combine(folder, dataText + "_mvc_" + trialType + "_" + trialNumber.ToString("00") + ".csv");

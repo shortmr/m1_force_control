@@ -10,8 +10,9 @@ public class ControlMVCSwitch : MonoBehaviour
     public GameObject stageText;
     public GameObject startTrial;
     public GameObject performanceDisplay;
+    public GameObject directionMode;
+    public int mode;
 
-    private int mode;
     private string modeText;
     private TMP_Text text;
     private TMP_Text feedbackText;
@@ -20,7 +21,7 @@ public class ControlMVCSwitch : MonoBehaviour
     void Start()
     {
         // Set mode to force on startup
-        mode = 0;
+        mode = 1;
         modeText = "MVC";
         MVC.SetActive(true);
         forceControl.SetActive(false);
@@ -33,15 +34,18 @@ public class ControlMVCSwitch : MonoBehaviour
     public void Switch()
     {
         stageText.GetComponent<TextMeshProUGUI>().text = "0";
-        if (mode == 0) {
-            mode = 1;
+        if (mode == 1) {
+            mode = 2;
             modeText = "Force Control";
             forceControl.SetActive(true);
             MVC.SetActive(false);
         }
-        else if (mode == 1)  {
-            mode = 0;
+        else if (mode == 2)  {
+            mode = 1;
             modeText = "MVC";
+            if (directionMode.GetComponent<ChangeDirection>().direction == 3) {
+                directionMode.GetComponent<ChangeDirection>().Flip(); // avoid undefined mode 3 for MVC
+            }
             MVC.SetActive(true);
             forceControl.SetActive(false);
             feedbackText = performanceDisplay.GetComponentInChildren<TMP_Text>();

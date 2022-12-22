@@ -21,7 +21,7 @@ public class ActualEffortControl : MonoBehaviour
     public GameObject desiredEffort;
     public bool ready;
     public bool begin;
-    public bool type;
+    public int type;
 
     public float mvcValuePF;
     public float mvcValueDF;
@@ -63,7 +63,7 @@ public class ActualEffortControl : MonoBehaviour
         ready = false;
         pass = false;
         begin = false;
-        type = true;
+        type = 1;
         counter = 0f;
 
         effortVec = new Vector3[1];
@@ -102,13 +102,13 @@ public class ActualEffortControl : MonoBehaviour
                 ready = false;
                 pass = true;
                 counter = 0f;
-                if (type) {
-                    //dorsiflexion
-                    mvcValue = mvcValueDF;
-                } else {
-                    //plantarflexion
-                    mvcValue = mvcValuePF;
-                }
+//                 if (type == 1) {
+//                     //dorsiflexion
+//                     mvcValue = mvcValueDF;
+//                 } else if (type == 2) {
+//                     //plantarflexion
+//                     mvcValue = mvcValuePF;
+//                 }
                 trialIndex = (float) desiredEffortComponent.positionCount * counter/trialDuration;
                 counterList.Clear();
                 actualEffortList.Clear();
@@ -135,6 +135,13 @@ public class ActualEffortControl : MonoBehaviour
                     desiredEffortList.Add(effortVec[(int)trialIndex].y);
                 }
             }
+            if ((positionEffort_f-positionOffset) > 0f) {
+                //dorsiflexion
+                mvcValue = mvcValueDF;
+            } else {
+                //plantarflexion
+                mvcValue = mvcValuePF;
+            }
             transform.localPosition = new Vector3(effortVec[(int)trialIndex].x, 100f*gain*(positionEffort_f-positionOffset)/mvcValue+2f, 0.0f);
             previousEffort_f = positionEffort_f;
         }
@@ -160,7 +167,7 @@ public class ActualEffortControl : MonoBehaviour
             sb.Append('\n').Append(time.ToString()).Append(',').Append(target.ToString()).Append(',').Append(y.ToString());
         }
         float rmse = Mathf.Sqrt(total_err/(float) renderer.positionCount);
-        float sd = Mathf.Sqrt(total_eff/(float) renderer.positionCount); // TODO: filter out movement frequency (Lodha, 2022)
+        float sd = Mathf.Sqrt(total_eff/(float) renderer.positionCount); // TODO: filter out movement frequency (Lodha, 2022) or use SPARC
         // update text feedback
         feedbackText.text = "Accuracy = " + rmse.ToString("0.00") + "\nSteadiness = " + sd.ToString("0.00"); // TODO: normalize score values to non-paretic limb
         SaveToCSV(sb.ToString());
@@ -175,10 +182,12 @@ public class ActualEffortControl : MonoBehaviour
         int.TryParse(stageText.GetComponent<TextMeshProUGUI>().text, out trialNumber);
         string dataText = dataField.GetComponent<InputField>().text;
         string trialType = "";
-        if (type) {
+        if (type == 1) {
             trialType = "df";
-        } else {
+        } else if (type == 2) {
             trialType = "pf";
+        } else if (type == 3) {
+            trialType = "dfpf";
         }
         var filePath = Path.Combine(folder, dataText + "_control_" + trialType + "_" + trialNumber.ToString("00") + ".csv");
 
